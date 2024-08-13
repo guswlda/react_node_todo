@@ -55,8 +55,8 @@ const Navbar = () => {
           <li
             key={idx}
             className={`${
-              menu.idx === idx ? 'bg-gray-950 border border-gray-700' : ''
-            } rounded-sm mb-1`}
+              menu.idx === 0 ? 'bg-gray-950 ' : ''
+            } rounded-sm mb-1 border border-gray-700`}
           >
             <Link to={menu.to} className="flex gap-x-4 items-center py-2 px-10">
               {menu.icon} {menu.label}
