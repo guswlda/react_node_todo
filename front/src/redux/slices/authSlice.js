@@ -4,7 +4,6 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   // 2. 초기 상태 정의
   authData: JSON.stringify(localStorage.getItem('authData')) || null,
-  token: localStorage.getItem('token') | null,
 };
 
 export const authSlice = createSlice({
@@ -15,16 +14,12 @@ export const authSlice = createSlice({
     login: (state, action) => {
       // update 상태값 변경
       state.authData = action.payload.authData;
-      state.token = action.payload.token;
-      localStorage.setItem('authData', JSON.stringify(action.payload.authData));
-      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('authData', JSON.stringify(action.payload.authData)); // setItem으로 콘솔 application 값을 넣어줌
     },
     logout: (state) => {
       // 상태값 비움
       state.authData = null;
-      state.token = null;
       localStorage.removeItem('authData');
-      localStorage.removeItem('token');
     },
   },
 });

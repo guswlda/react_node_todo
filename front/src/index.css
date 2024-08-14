@@ -16,7 +16,7 @@ body{
 .page_section {width:100%; height:100vh;  padding:0.5rem; display:flex; gap:0.5rem;}
 
 /* Panel Style */
-.panel{width:80%; height:100%; background:#ccc;}
+.panel{width:80%; height:100%;}
 
 /* Custom Logo Style */
 .logo {
@@ -42,3 +42,5 @@ body{
   border-radius: 5px;
   border: 2px solid #ebf5fc;
 }
+
+.skeleton{display:flex; line-height:30px}
