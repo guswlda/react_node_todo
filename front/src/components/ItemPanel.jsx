@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import PageTitle from './PageTitle';
 import AddItem from './AddItem';
@@ -8,6 +9,7 @@ import Item from './Item';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGetItemsData } from '../redux/slices/apiSlice';
+import LoadingSkeletion from './LoadingSkeletion';
 
 // useEffect -> dispatch
 // authSlice에서 state selector 가져옴
@@ -43,7 +45,7 @@ const ItemPanel = ({ pageTitle }) => {
       } catch (error) {
         console.error('Failed to fetch items: ', error);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     };
     fetchGetItems();
@@ -59,18 +61,14 @@ const ItemPanel = ({ pageTitle }) => {
 
           <div className="items flex flex-wrap">
             {loading ? (
-              <div className="flex">
-                <SkeletonTheme
-                  baseColor="#202020"
-                  highlightColor="#444"
-                  width="100%"
-                  height="25vh"
-                >
-                  <p className="skeleton flex">
-                    <Skeleton count={3} width="100%" line-height="30px" />
-                  </p>
-                </SkeletonTheme>
-              </div>
+              <SkeletonTheme
+                baseColor="#202020"
+                highlightColor="#444"
+                width="100%"
+                height="25vh"
+              >
+                <LoadingSkeletion />
+              </SkeletonTheme>
             ) : (
               getTasksData?.map((item, idx) => <Item key={idx} task={item} />)
             )}
