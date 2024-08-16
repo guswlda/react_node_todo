@@ -4,6 +4,7 @@
 
 *{margin:0; padding:0; box-sizing: border-box;}
 
+/* dark */
 :root{
   color-scheme: dark;
 }
@@ -43,6 +44,59 @@ body{
   border: 2px solid #ebf5fc;
 }
 
+/* Skeleton Style */
 span[aria-live="polite"] {
   width:100%;
 }
+
+/* Post Input Modal Style */
+.input-control {
+  position: relative;
+  margin: 1.6rem 0;
+  font-weight: 500;
+
+/* Input-control 공통적으로 자식 적용 */
+  input,
+  textarea {
+    width: 100%;
+    border: none;
+    padding: 0.5rem;
+    resize: none;
+    background-color: #000;
+    color: #ccc;;
+    border-radius: 0.25rem;
+  }
+}
+
+
+.submit-btn button {
+  color: #bbb;
+
+
+  i {
+    font-size: 0.875rem;
+  }
+
+
+}
+
+
+.toggler {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+
+  label {
+    flex: 1;
+  }
+
+
+  input {
+    width: initial;
+  }
+}
+
+
+
+

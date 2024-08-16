@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import PageTitle from './PageTitle';
@@ -21,7 +21,7 @@ const ItemPanel = ({ pageTitle }) => {
   const authData = useSelector((state) => state.auth.authData);
   const isOpen = useSelector((state) => state.modal.isOpen);
   const userKey = authData?.email;
-  // const userKey = authData?.sub;
+  // const userKey = authData?.sub; => .sub (함수로 값을 가져옴)
   const getTasksData = useSelector((state) => state.api.getItemsData);
 
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ const ItemPanel = ({ pageTitle }) => {
       return;
     }
 
-    // 비동기 시 trycatch 가능,
+    // async 비동기 시 trycatch 가능, userkey를 사용하여 로딩 시 getitem 가져옴
     const fetchGetItems = async () => {
       try {
         setLoading(true);
@@ -52,7 +52,7 @@ const ItemPanel = ({ pageTitle }) => {
   }, [dispatch, userKey]);
 
   return (
-    <div className="panel bg-[#212121] w-4/5 h-full rounded-md border border-gray-500 py-0 px-4">
+    <div className="panel bg-[#212121] w-4/5 h-full rounded-md border border-gray-500 py-5 px-4 overflow-y-auto">
       {userKey ? (
         <div className="panel-wrapper">
           {isOpen && <Modal />}

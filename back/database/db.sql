@@ -12,7 +12,7 @@ CREATE TABLE task (
 );
 
 -- 데이터 추가
-INSERT INTO task (_id, title, description, data, isCompleted, isImportant, userId) VALUES ('1', '할일1', '할일1 설명' '2024-08-12', false, false, 'guswlda');
+INSERT INTO task (_id, title, description, date, isCompleted, isImportant, userId) VALUES ('1', '할일1', '할일1 설명' '2024-08-12', false, false, 'guswlda');
 
 -- 데이터 조회
 SELECT * FROM task;
@@ -26,3 +26,9 @@ ALTER DATABASE postgres SET timezone = 'Asia/Seoul';
 SHOW timezone;
 
 SET timezone = 'Asia/Seoul';
+
+-- 데이터 삭제
+DELETE FROM task WHERE _id = '1234';
+
+-- 데이터 update
+UPDATE task SET iscompleted = true  WHERE _id = '1236'

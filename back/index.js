@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+// controller와 routes 사용하지 전 코드
 // app.get('/get_tasks', async (req, res) => {
 //   try {
 //     const result = await database.query('SELECT * FROM task');
@@ -28,7 +29,8 @@ app.get('/', (req, res) => {
 // });
 
 app.use(require('./routes/getRoutes')); // getRoutes 사용
-
 app.use(require('./routes/postRoutes')); // postRoutes 사용
+app.use(require('./routes/deleteRoutes')); // deleteRoutes 사용
+app.use(require('./routes/updateRoutes')); // updateRoutes 사용
 
 app.listen(PORT, () => console.log(`Server is running on ${PORT}`)); // 서버 실행 시 메시지 출력
