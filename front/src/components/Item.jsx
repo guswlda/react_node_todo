@@ -20,7 +20,7 @@ const Item = ({ task }) => {
 
   const dispatch = useDispatch();
 
-  const [isCompleted, setIsCompleted] = useState(iscompleted);
+  const [isCompleted, setIsCompleted] = useState(!iscompleted);
 
   // 만약 _id primary key가 없다면 잘못된 사용자이다 (react toast 사용)
   // 예약어는 변수로 사용하지 않는 것을 권장 (confirm)

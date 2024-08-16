@@ -68,7 +68,7 @@ const Modal = () => {
     // post로 할일을 추가 -> 할일 추가와 동시에 modal 닫힘
     // dispatch를 통해 getitem 데이터를 화면에 바로 가져옴
     try {
-      dispatch(fetchPostItemData(formData));
+      await dispatch(fetchPostItemData(formData)).unwrap();
       toast.success('할일이 추가되었습니다.');
 
       handleCloseModal();
