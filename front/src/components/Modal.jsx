@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { closeModal } from '../redux/slices/modalSlice';
 import { IoMdClose } from 'react-icons/io';
@@ -7,13 +7,20 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { toast } from 'react-toastify';
 
-import { fetchGetItemsData, fetchPostItemData } from '../redux/slices/apiSlice';
+import {
+  fetchGetItemsData,
+  fetchPostItemData,
+  fetchPutItemData,
+} from '../redux/slices/apiSlice';
 
+// modal close 시 dispatch (ModalSlice)
+// (isOpen, modalType, task) 수정 버튼을 누를 시 나타날 데이터
+// console.log(user?.email); => userId를 email로 사용 콘솔에서 확인
 const Modal = () => {
-  // modal close 시 dispatch (ModalSlice)
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.authData);
-  // console.log(user?.email);
+  const { isOpen, modalType, task } = useSelector((state) => state.modal);
+  // console.log(modalType, task);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -23,6 +30,29 @@ const Modal = () => {
     isImportant: 'false',
     userId: user?.email,
   });
+
+  // modalType, task가 변경 시 useEffect (modalSlice 참고)
+  useEffect(() => {
+    if (modalType === 'update' && task) {
+      setFormData({
+        title: task.title || '',
+        description: task.description || '',
+        date: task.date || '',
+        isCompleted: task.iscompleted || false,
+        isImportant: task.isimportant || false,
+        id: task._id || '',
+      });
+    } else {
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        isCompleted: false,
+        isImportant: false,
+        userId: user?.email,
+      });
+    }
+  }, [modalType, task]);
 
   // onchange title, description, date 등 작성 => 기존 formData 값을 다 가져옴, name과 value 값을 받음
   // prev 기존 객체를 받음 -> name : value를 받아서 업데이트 (checkbox일 때 check 확인, 아닐 시 value 확인 )
@@ -64,13 +94,19 @@ const Modal = () => {
 
     // console.log(formData);
 
+    // update formData (기본 데이터)
     // 데이터 베이스 post 이후 바로 화면에 나타내기 위함
     // post로 할일을 추가 -> 할일 추가와 동시에 modal 닫힘
     // dispatch를 통해 getitem 데이터를 화면에 바로 가져옴
     try {
-      await dispatch(fetchPostItemData(formData)).unwrap();
-      toast.success('할일이 추가되었습니다.');
+      if (modalType === 'update' && task) {
+        await dispatch(fetchPutItemData(formData)).unwrap();
+        toast.success('할일이 수정되었습니다.');
+      } else if (modalType === 'create' && task === null) {
+        await dispatch(fetchPostItemData(formData)).unwrap();
 
+        toast.success('할일이 추가되었습니다.');
+      }
       handleCloseModal();
 
       await dispatch(fetchGetItemsData(user?.email)).unwrap();
@@ -89,7 +125,7 @@ const Modal = () => {
     <div className="modal fixed bg-black bg-opacity-50 flex items-center justify-center w-full h-full left-0 top-0 z-50 ">
       <div className="form-wrapper bg-gray-700 rounded-md w-1/2 flex flex-col items-center relative p-4 ">
         <h2 className="text-2xl py-2 border-b border-gray-300 w-fit font-semibold">
-          할일 추가하기
+          {modalType === 'update' ? '할일 수정하기' : '할일 추가하기'}
         </h2>
         <form className="w-full" onSubmit={handleSubmit}>
           <div className="input-control">
@@ -129,7 +165,7 @@ const Modal = () => {
               type="checkbox"
               id="isCompleted"
               name="isCompleted"
-              value={formData.isCompleted}
+              checked={formData.isCompleted}
               onChange={handleChange}
             />
           </div>
@@ -139,7 +175,7 @@ const Modal = () => {
               type="checkbox"
               id="isImportant"
               name="isImportant"
-              value={formData.isImportant}
+              checked={formData.isImportant}
               onChange={handleChange}
             />
           </div>
@@ -148,7 +184,7 @@ const Modal = () => {
               type="submit"
               className="flex justify-end bg-black w-fit py-3 px-6 rounded-md hover:bg-slate-900"
             >
-              Create Task
+              {modalType === 'update' ? '할일 수정하기' : '할일 추가하기'}
             </button>
           </div>
         </form>

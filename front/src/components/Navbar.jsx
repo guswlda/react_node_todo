@@ -11,43 +11,49 @@ import { navMenus } from '../utils/data';
 import { Link } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 
+// redux (stored 가져옴)
+// 구글 로그인 ID 값 (env 참고)
 const Navbar = ({ menuIdx }) => {
-  // redux (stored 가져옴)
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.authData);
   const { name } = user || {};
-  // 구글 로그인 ID 값 (env 참고)
   const googleClientId = process.env.REACT_APP_AUTH_CLIENT_ID;
   const [isAuth, setIsAuth] = useState(false); // userInfo가 없는 상태 초기화
 
   // 로그인 성공될 때 가져오는 값 => useCallback redux 계속 갱신되므로 사용함
+  // jwtDecode (jwt : credential을 사용하기 위함)
+  // dispatch 로그인
+  // 갱신 후 setIsAuth(false)=> 로그인으로 변경됨
   const handleLoginSuccess = useCallback(
     (response) => {
-      const decoded = jwtDecode(response.credential); // jwtDecode (jwt : credential을 사용하기 위함)
-      dispatch(login({ authData: decoded })); // dispatch 로그인
-      setIsAuth(true); // 갱신 후 setIsAuth(false)=> 로그인으로 변경됨
+      const decoded = jwtDecode(response.credential);
+      dispatch(login({ authData: decoded }));
+      setIsAuth(true);
     },
     [dispatch]
   );
 
+  // 로그인 후 새로고침 시 로그아웃 되는 현상
+  // dispatch가 실행될 시 useEffect 실행
+  // JSON.parse : JSON => 객체로 변경 (JSON.stringify : 객체 => JSON)
+  // localStorage storedData && storedToken (둘 다 있다면), dispatch => 로그인으로 인식
+  // dispatch할 시 storedData, storedToken을 localStorage에 넣어줌 (useEffect 값을 다시 넣어줌)
   useEffect(() => {
-    // 로그인 후 새로고침 시 로그아웃 되는 현상
-    // dispatch가 실행될 시 useEffect 실행
-    // JSON.parse : JSON => 객체로 변경 (JSON.stringify : 객체 => JSON)
     const storedData = JSON.parse(localStorage.getItem('authData'));
-    // localStorage storedData && storedToken (둘 다 있다면), dispatch => 로그인으로 인식
     if (storedData) {
       dispatch(login({ authData: storedData }));
       setIsAuth(true);
     }
-  }, [dispatch]); // dispatch할 시 storedData, storedToken을 localStorage에 넣어줌 (useEffect 값을 다시 넣어줌)
+  }, [dispatch]);
 
+  // 구글 ID가 가져올때 구글 값 초기화
+  // env.local CLIENT ID 참조
+  // callback (로그인 시 사용하는 함수 이해할 필요 X)
   useEffect(() => {
     if (window.google) {
-      // 구글 ID가 가져올때 구글 값 초기화
       window.google.accounts.id.initialize({
-        client_id: googleClientId, // env.local CLIENT ID 참조
-        callback: handleLoginSuccess, // callback (로그인 시 사용하는 함수 이해할 필요 X)
+        client_id: googleClientId,
+        callback: handleLoginSuccess,
       });
     }
   }, [googleClientId, handleLoginSuccess]);
@@ -58,9 +64,10 @@ const Navbar = ({ menuIdx }) => {
   };
 
   // 로그아웃 될 때
+  // 기본 logout 상태 : false (on: true, off: false)
   const handleLogout = () => {
     dispatch(logout());
-    setIsAuth(false); // 기본 logout 상태 : false
+    setIsAuth(false);
     console.log('logout');
   };
 

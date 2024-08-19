@@ -4,12 +4,14 @@ import {
   GET_TASKS_API_URL,
   POST_TASK_API_URL,
   UPDATE_COMPLETED_TASK_API_URL,
+  UPDATE_TASK_API_URL,
 } from '../../utils/apiUrl'; // API Url import
 import {
   deleteRequest,
   getRequest,
   patchRequest,
   postRequest,
+  putRequest,
 } from '../../utils/requestMethods'; // API Get method import
 
 // 공통된 비동기 액션 생성 로직을 별도의 함수로 분리
@@ -51,20 +53,33 @@ const deleteItemFetchThunk = (actionType, apiURL) => {
   });
 };
 
+// console.log (true, false 확인 => 랜덤 생성 ItemPanel에서 newIsCompleted 생성하여 새로 보냄)
 const updateCompletedItemFetchThunk = (actionType, apiURL) => {
   return createAsyncThunk(actionType, async (options) => {
-    console.log(options);
+    // console.log(options);
     return await patchRequest(apiURL, options);
   });
 };
 
-// Get => getItemsFetchThunk (위의 로직 시작)
+// 수정 버튼 클릭 시 수정 (put)
+const updateItemFetchThunk = (actionType, apiURL) => {
+  return createAsyncThunk(actionType, async (updateData) => {
+    console.log(updateData);
+    const options = {
+      body: JSON.stringify(updateData), // 표준 JSON 문자열로 변환
+    };
+    return await putRequest(apiURL, options);
+  });
+};
+
+// Get - fetchGetItemsData 생성
+// ItemPanel.jsx Item.jsx 사용  => 데이터 값을 가져올 때 사용
 export const fetchGetItemsData = getItemsFetchThunk(
   'fetchGetItems', // actionType
   GET_TASKS_API_URL // apiUrl
 );
 
-// post
+// post - fetchPostItemData(함수 생성 => Modal 사용)
 export const fetchPostItemData = postItemFetchThunk(
   'fetchPostItem', // actionType
   POST_TASK_API_URL // apiUrl
@@ -76,10 +91,16 @@ export const fetchDeleteItemData = deleteItemFetchThunk(
   DELETE_TASK_API_URL // apiUrl
 );
 
-// patch
+// patch (update)
 export const fetchUpdateCompletedItemData = updateCompletedItemFetchThunk(
   'fetchUpdateCompleted', // actionType
   UPDATE_COMPLETED_TASK_API_URL // apiUrl
+);
+
+// 수정 시 put (update)
+export const fetchPutItemData = updateItemFetchThunk(
+  'fetchPutItem', // actionType
+  UPDATE_TASK_API_URL // apiUrl
 );
 
 // handleFullfilled : 성공 (공통으로 사용)
@@ -99,7 +120,8 @@ const apiSlice = createSlice({
     getItemsData: null,
     postItemData: null,
     deleteItemData: null,
-    UpdateCompletedData: null,
+    updateCompletedData: null,
+    putItemData: null,
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -115,9 +137,11 @@ const apiSlice = createSlice({
       .addCase(fetchDeleteItemData.rejected, handleRejected)
       .addCase(
         fetchUpdateCompletedItemData.fulfilled,
-        handleFullfilled('UpdateCompletedData')
+        handleFullfilled('updateCompletedData')
       )
-      .addCase(fetchUpdateCompletedItemData.rejected, handleRejected);
+      .addCase(fetchUpdateCompletedItemData.rejected, handleRejected)
+      .addCase(fetchPutItemData.fulfilled, handleFullfilled('putItemData'))
+      .addCase(fetchPutItemData.rejected, handleRejected);
   },
 });
 

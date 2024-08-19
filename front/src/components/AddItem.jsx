@@ -8,8 +8,9 @@ const AddItem = () => {
   const dispatch = useDispatch();
 
   // 버튼 클릭 시 modal 오픈 (버튼에 onclick)
+  // 할일 추가하기 =>  modalType, task를 가져와야함 (task : null)
   const handleOpenModal = () => {
-    dispatch(openModal());
+    dispatch(openModal({ modalType: 'create', task: null }));
   };
 
   return (

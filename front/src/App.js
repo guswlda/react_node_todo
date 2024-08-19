@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Home from './components/Home';
 import Completed from './components/Completed';
+import Proceeding from './components/Proceeding';
+import Important from './components/Important';
 
 function App() {
   return (
@@ -13,8 +15,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/completed" element={<Completed />} />
-          <Route path="/proceeding" element={<Home />} />
-          <Route path="/important" element={<Home />} />
+          <Route path="/proceeding" element={<Proceeding />} />
+          <Route path="/important" element={<Important />} />
         </Routes>
 
         <ToastContainer

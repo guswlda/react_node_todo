@@ -5,8 +5,12 @@ import ItemPanel from '../ItemPanel';
 const index = () => {
   return (
     <div className="page_section">
-      <Navbar menuIdx={1} />
-      <ItemPanel pageTitle="Completed Items" filterCompleted={true} />
+      <Navbar menuIdx={3} />
+      <ItemPanel
+        pageTitle="Important Items"
+        filterCompleted="all"
+        filterImportant={true}
+      />
     </div>
   );
 };

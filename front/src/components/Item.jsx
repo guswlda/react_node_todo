@@ -5,6 +5,7 @@ import { FaTrash } from 'react-icons/fa';
 
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
+import { openModal } from '../redux/slices/modalSlice';
 
 import {
   fetchDeleteItemData,
@@ -20,7 +21,7 @@ const Item = ({ task }) => {
 
   const dispatch = useDispatch();
 
-  const [isCompleted, setIsCompleted] = useState(!iscompleted);
+  const [isCompleted, setIsCompleted] = useState(iscompleted);
 
   // 만약 _id primary key가 없다면 잘못된 사용자이다 (react toast 사용)
   // 예약어는 변수로 사용하지 않는 것을 권장 (confirm)
@@ -45,12 +46,19 @@ const Item = ({ task }) => {
     }
   };
 
-  const changeCompleted = () => {
-    setIsCompleted(!isCompleted);
+  // setIsCompleted(!isCompleted)을 호출하면 상태 업데이트가 비동기적으로 이루어지기 때문에, isCompleted의 값이 즉시 변경되지 않는다.
+  // 따라서 updateCompletedData 객체를 생성할 때 isCompleted의 이전 값이 사용된다. 이로 인해 true/false가 한 단계씩 밀리게 된다.
+  // isCompleted를 눌러도 db에서는 값이 변경되지 X
+  // 비동기적 생성으로 새로운 값(newIsCompleted) 만들어 db에 fetchUpdateCompletedItemData로 보내줌 (requestMethod)
+  // 상태를 미리 업데이트 하여 반영된 값을 전달
+
+  const changeCompleted = async () => {
+    const newIsCompleted = !isCompleted;
+    setIsCompleted(newIsCompleted);
 
     const updateCompletedData = {
       itemId: _id,
-      isCompleted: isCompleted,
+      isCompleted: newIsCompleted,
     };
 
     const options = {
@@ -61,7 +69,16 @@ const Item = ({ task }) => {
       body: JSON.stringify(updateCompletedData),
     };
 
-    dispatch(fetchUpdateCompletedItemData(options));
+    await dispatch(fetchUpdateCompletedItemData(options)).unwrap();
+    newIsCompleted
+      ? toast.success('할일을 완료하였습니다.')
+      : toast.error('할일을 완료하지 못하였습니다.');
+    await dispatch(fetchGetItemsData(userid)).unwrap();
+  };
+
+  // 수정 버튼을 누를 시 수정 가능 (modalType을 update 시 task 나타남)
+  const handleOpenModal = () => {
+    dispatch(openModal({ modalType: 'update', task }));
   };
 
   return (
@@ -72,13 +89,13 @@ const Item = ({ task }) => {
             <span className="w-full h-[1px] bg-gray-500 absolute bottom-0"></span>
             {title}
           </h2>
-          <p>{description}</p>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{description}</p>
         </div>
         <div className="lower">
           <p className="text-sm mb-1">{date}</p>
           <div className="item-footer flex justify-between">
             <div className="item-footer-left flex gap-x-2">
-              {isCompleted ? (
+              {iscompleted ? (
                 <button
                   className="block py-1 px-4 bg-green-400 text-sm text-white rounded-md"
                   onClick={changeCompleted}
@@ -93,14 +110,15 @@ const Item = ({ task }) => {
                   InCompleted
                 </button>
               )}
-
-              <button className="block py-1 px-4 bg-red-400 text-sm text-white rounded-md">
-                Important
-              </button>
+              {isimportant && (
+                <button className="block py-1 px-4 bg-red-400 text-sm text-white rounded-md">
+                  Important
+                </button>
+              )}
             </div>
             <div className="item-footer-right flex gap-x-4 items-center">
               <button>
-                <MdEditDocument className="w-5 h-5" />
+                <MdEditDocument className="w-5 h-5" onClick={handleOpenModal} />
               </button>
               <button>
                 <FaTrash className="delete" onClick={deleteItem} />

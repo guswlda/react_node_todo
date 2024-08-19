@@ -5,10 +5,13 @@ const DELETE_TASK_API_URL = 'http://localhost:8080/delete_task';
 const UPDATE_COMPLETED_TASK_API_URL =
   'http://localhost:8080/update_completed_task';
 
+const UPDATE_TASK_API_URL = 'http://localhost:8080/update_task';
+
 // 상수 대문자 사용
 export {
   GET_TASKS_API_URL,
   POST_TASK_API_URL,
   DELETE_TASK_API_URL,
   UPDATE_COMPLETED_TASK_API_URL,
+  UPDATE_TASK_API_URL,
 };

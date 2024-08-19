@@ -5,14 +5,19 @@ export const modalSlice = createSlice({
   name: 'modal',
   initialState: {
     isOpen: false,
+    modalType: 'create',
+    task: null,
   },
   reducers: {
-    openModal: (state) => {
+    openModal: (state, action) => {
       // open -> state true
       state.isOpen = true;
+      state.modalType = action.payload.modalType;
+      state.task = action.payload.task;
+      // console.log(state.modalType, state.task.iscompleted);
     },
+    // close -> false
     closeModal: (state) => {
-      // close -> false
       state.isOpen = false;
     },
   },
